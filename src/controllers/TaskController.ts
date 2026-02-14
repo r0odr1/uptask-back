@@ -10,8 +10,7 @@ export class TaskController {
       const task = new Task(req.body)
       task.project = req.project._id
       req.project.tasks.push(task._id)
-      await task.save()
-      await req.project.save()
+      await Promise.allSettled([task.save(), req.project.save()])
       res.send('Tarea Creada Correctamente')
 
     } catch (error) {
