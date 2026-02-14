@@ -6,8 +6,6 @@ export class TaskController {
 
   static createTask = async (req: Request, res: Response) => {
 
-
-
     try {
       const task = new Task(req.body)
       task.project = req.project._id
