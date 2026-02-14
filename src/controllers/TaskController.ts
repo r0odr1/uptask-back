@@ -1,19 +1,30 @@
 import type { Request, Response} from 'express'
+import Project from '../models/Project'
+import Task from '../models/Task'
 
 export class TaskController {
 
-  static createProject = async (req: Request, res: Response) => {
+  static createTask = async (req: Request, res: Response) => {
 
-      const { projectId } = req.params
-      console.log(projectId)
+    const { projectId } = req.params
+    const project = await Project.findById(projectId)
 
-      try {
-        // await project.save()
-        // res.send('Proyecto Creado Correctamente')
-
-      } catch (error) {
-        console.log(error)
-      }
+    if(!project) {
+      const error = new Error('Proyecto no encontrado')
+      return res.status(404).json({ error: error.message })
     }
+
+    try {
+      const task = new Task(req.body)
+      task.project = project._id
+      project.tasks.push(task._id)
+      await task.save()
+      await project.save()
+      res.send('Tarea Creada Correctamente')
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 }
