@@ -18,6 +18,14 @@ router.get('/', ProjectController.getAllProjects)
 router.get('/:id',
   param('id').isMongoId().withMessage('ID no valido'),
   handleInputErrors,
-  ProjectController.getAllProjectById)
+  ProjectController.getProjectById)
+
+router.put('/:id',
+  param('id').isMongoId().withMessage('ID no valido'),
+  body('projectName').notEmpty().withMessage('El Nombre del Proyecto es Obligatorio'),
+  body('clientName').notEmpty().withMessage('El Nombre del Cliente es Obligatorio'),
+  body('description').notEmpty().withMessage('La Descripcion del Proyecto es Obligatoria'),
+  handleInputErrors,
+  ProjectController.updateProject)
 
 export default router
