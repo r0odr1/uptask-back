@@ -41,6 +41,9 @@ router.put('/:id',
 
 router.post('/:projectId/tasks',
   validateProjectExist,
+  body('name').notEmpty().withMessage('El Nombre de la tarea es obligatorio'),
+  body('description').notEmpty().withMessage('La Descripcion de la tarea es bligatoria'),
+  handleInputErrors,
   TaskController.createTask
 )
 
