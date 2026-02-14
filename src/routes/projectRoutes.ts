@@ -22,7 +22,8 @@ router.get('/', ProjectController.getAllProjects)
 router.get('/:id',
   param('id').isMongoId().withMessage('ID no valido'),
   handleInputErrors,
-  ProjectController.getProjectById)
+  ProjectController.getProjectById
+)
 
 router.put('/:id',
   param('id').isMongoId().withMessage('ID no valido'),
@@ -30,12 +31,14 @@ router.put('/:id',
   body('clientName').notEmpty().withMessage('El Nombre del Cliente es Obligatorio'),
   body('description').notEmpty().withMessage('La Descripcion del Proyecto es Obligatoria'),
   handleInputErrors,
-  ProjectController.updateProject)
+  ProjectController.updateProject
+)
 
   router.delete('/:id',
   param('id').isMongoId().withMessage('ID no valido'),
   handleInputErrors,
-  ProjectController.deleteProject)
+  ProjectController.deleteProject
+)
 
 /** Routes for tasks */
 
@@ -53,9 +56,17 @@ router.get('/:projectId/tasks',
 )
 
 router.get('/:projectId/tasks/:taskId',
-  param('itaskIdd').isMongoId().withMessage('ID no valido'),
+  param('taskId').isMongoId().withMessage('ID no valido'),
   handleInputErrors,
   TaskController.getTaskById
+)
+
+router.put('/:projectId/tasks/:taskId',
+  param('taskId').isMongoId().withMessage('ID no valido'),
+  body('name').notEmpty().withMessage('El Nombre de la tarea es obligatorio'),
+  body('description').notEmpty().withMessage('La Descripcion de la tarea es bligatoria'),
+  handleInputErrors,
+  TaskController.updateTask
 )
 
 export default router
