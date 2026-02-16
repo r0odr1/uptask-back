@@ -32,23 +32,16 @@ export class TaskController {
   static getTaskById = async (req: Request, res: Response) => {
 
     try {
-      const { taskId } = req.params
-      const task = await Task.findById(taskId)
 
-      if(!task) {
-        const error = new Error('Tarea no encontrada')
-        return res.status(404).json({ error: error.message })
-      }
-
-      if(!task.project.equals(req.project._id)) {
+      if(!req.task.project.equals(req.project._id)) {
         const error = new Error('Accion no valida')
         return res.status(400).json({ error: error.message })
       }
 
       const response = {
-      ...task.toJSON(),
-      _id: task._id.toString(),
-      project: task.project.toString()
+      ...req.task.toJSON(),
+      _id: req.task._id.toString(),
+      project: req.task.project.toString()
       }
 
       res.json(response)
@@ -61,29 +54,22 @@ export class TaskController {
   static updateTask = async (req: Request, res: Response) => {
 
     try {
-      const { taskId } = req.params
-      const task = await Task.findById(taskId)
 
-      if(!task) {
-        const error = new Error('Tarea no encontrada')
-        return res.status(404).json({ error: error.message })
-      }
-
-      if(!task.project.equals(req.project._id)) {
+      if(!req.task.project.equals(req.project._id)) {
         const error = new Error('Accion no valida')
         return res.status(400).json({ error: error.message })
       }
 
-      task.name = req.body.name
-      task.description = req.body.description
-      await task.save()
+      req.task.name = req.body.name
+      req.task.description = req.body.description
+      await req.task.save()
 
       const response = {
         message: 'Tarea actualizada correctamente',
         task: {
-          ...task.toJSON(),
-          _id: task._id.toString(),
-          project: task.project.toString()
+          ...req.task.toJSON(),
+          _id: req.task._id.toString(),
+          project: req.task.project.toString()
         }
       }
 
@@ -97,23 +83,16 @@ export class TaskController {
   static deleteTask = async (req: Request, res: Response) => {
 
     try {
-      const { taskId } = req.params
-      const task = await Task.findById(taskId)
 
-      if(!task) {
-        const error = new Error('Tarea no encontrada')
-        return res.status(404).json({ error: error.message })
-      }
-
-      req.project.tasks = req.project.tasks.filter(projectTask => projectTask.toString() !== taskId.toString())
-      await Promise.allSettled([task.deleteOne(), req.project.save()])
+      req.project.tasks = req.project.tasks.filter(projectTask => projectTask.toString() !== req.task._id.toString())
+      await Promise.allSettled([req.task.deleteOne(), req.project.save()])
 
       const response = {
         message: 'Tarea eliminada correctamente',
         task: {
-          ...task.toJSON(),
-          _id: task._id.toString(),
-          project: task.project.toString()
+          ...req.task.toJSON(),
+          _id: req.task._id.toString(),
+          project: req.task.project.toString()
         }
       }
 
@@ -127,17 +106,10 @@ export class TaskController {
   static updateStatus = async (req: Request, res: Response) => {
 
     try {
-      const { taskId } = req.params
-
-      const task = await Task.findById(taskId)
-      if(!task) {
-        const error = new Error('Tarea no encontrada')
-        return res.status(404).json({ error: error.message })
-      }
 
       const { status } = req.body
-      task.status = status
-      await task.save()
+      req.task.status = status
+      await req.task.save()
       res.send('Tarea Actualizada Correctamente')
 
     } catch (error) {
