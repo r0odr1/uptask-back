@@ -14,6 +14,7 @@ router.post('/create-account',
     }
     return true
   }),
+  
   body('email').isEmail().withMessage('E-mail no válido'),
   handleInputErrors,
   AuthController.createAccount
