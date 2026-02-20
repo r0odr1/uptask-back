@@ -1,9 +1,8 @@
 import type { Request, Response } from 'express'
 import User from '../models/User'
-import { hashPassword } from '../utils/auth'
+import { checkPassword, hashPassword } from '../utils/auth'
 import Token from '../models/Token'
 import { generateToken } from '../utils/token'
-import { transporter } from '../config/nodemailer'
 import { AuthEmail } from '../emails/AuthEmail'
 
 export class AuthController {
@@ -96,10 +95,12 @@ export class AuthController {
         return res.status(401).json({error : error.message})
       }
 
-      console.log(user)
-
-
-
+      // Revisar password
+      const isPasswordCorrect = await checkPassword(password, user.password)
+      if(!isPasswordCorrect) {
+        const error = new Error('Usuario o Contraseña incorrecta')
+        return res.status(401).json({error : error.message})
+      }
 
       res.send('Autenticando...')
     } catch (error) {
