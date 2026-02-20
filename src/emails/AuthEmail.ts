@@ -15,7 +15,7 @@ export class AuthEmail {
       text: 'UpTask - Confirma tu cuenta',
       html: `<p>Hola: ${user.name}, has creado tu cuenta en UpTask, debes confirmarla para empezar a disfrutarla</p>
         <p>Visita el siguiente enlace:</p>
-        <a href="">Confirmar cuenta</a>
+        <a href="${process.env.FRONTEND_URL}/auth/confirm-account">Confirmar cuenta</a>
         <p>E ingresa el codigo: <b>${user.token}</b></p>
         <p>Este token expira en 10 minutos</p >
       `
