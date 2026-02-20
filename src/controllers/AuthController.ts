@@ -26,7 +26,7 @@ export class AuthController {
       user.password = await hashPassword(password)
 
       // Generar el token
-      const token = new Token
+      const token = new Token()
       token.token = generateToken()
       token.user = user._id
 
@@ -103,6 +103,43 @@ export class AuthController {
       }
 
       res.send('Autenticando...')
+    } catch (error) {
+      res.status(500).json.apply({error: 'Hubo un error'})
+    }
+  }
+
+  static requestConfirmationCode = async (req: Request, res: Response) => {
+
+    try {
+      const { email } = req.body
+
+      // Usuario existe
+      const user = await User.findOne({email})
+
+      if(!user) {
+        const error = new Error('El usuario no esta registrado')
+        return res.status(404).json({error: error.message})
+      }
+
+      if(user.confirmed) {
+        const error = new Error('El usuario ya esta confirmado')
+        return res.status(403).json({error: error.message})
+      }
+
+      // Generar el token
+      const token = new Token()
+      token.token = generateToken()
+      token.user = user._id
+
+      // Enviar el email
+      AuthEmail.sendConfirmationEmail({
+        email: user.email,
+        name: user.name,
+        token: token.token
+      })
+
+      await Promise.allSettled([user.save(), token.save()])
+      res.send('Se envió un nuevo token a tu correo')
     } catch (error) {
       res.status(500).json.apply({error: 'Hubo un error'})
     }
