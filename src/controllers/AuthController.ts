@@ -40,7 +40,7 @@ export class AuthController {
       await Promise.allSettled([user.save(), token.save()])
       res.send('Cuenta creada, revisa tu correo para confirmarla')
     } catch (error) {
-      res.status(500).json.apply({error: 'Hubo un error'})
+      res.status(500).json({error: 'Hubo un error'})
     }
   }
 
@@ -62,7 +62,7 @@ export class AuthController {
       await Promise.allSettled([ user.save(), tokenExists.deleteOne() ])
       res.send('Cuenta confirmada correctamente')
     } catch (error) {
-      res.status(500).json.apply({error: 'Hubo un error'})
+      res.status(500).json({error: 'Hubo un error'})
     }
   }
 
@@ -141,7 +141,7 @@ export class AuthController {
       await Promise.allSettled([user.save(), token.save()])
       res.send('Se envió un nuevo token a tu correo')
     } catch (error) {
-      res.status(500).json.apply({error: 'Hubo un error'})
+      res.status(500).json({error: 'Hubo un error'})
     }
   }
 
@@ -173,7 +173,7 @@ export class AuthController {
 
       res.send('Se envió un nuevo token a tu correo')
     } catch (error) {
-      res.status(500).json.apply({error: 'Hubo un error'})
+      res.status(500).json({error: 'Hubo un error'})
     }
   }
 
@@ -191,7 +191,31 @@ export class AuthController {
 
       res.send('Token válido, Define tu nueva contraseña')
     } catch (error) {
-      res.status(500).json.apply({error: 'Hubo un error'})
+      res.status(500).json({error: 'Hubo un error'})
+    }
+  }
+
+  static updatePasswordWithToken = async (req: Request, res: Response) => {
+
+    try {
+      const { token } = req.params
+      const { password } = req.body
+
+      const tokenExists = await Token.findOne({token})
+
+      if(!tokenExists) {
+        const error = new Error('Token no válido')
+        return res.status(404).json({error : error.message})
+      }
+
+      const user = await User.findById(tokenExists.user)
+      user.password = await hashPassword(password)
+
+      await Promise.allSettled([user.save(), tokenExists.deleteOne()])
+
+      res.send('La Contraseña se modificó correctamente')
+    } catch (error) {
+      res.status(500).json({error: 'Hubo un error'})
     }
   }
 }
