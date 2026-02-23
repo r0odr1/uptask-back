@@ -8,11 +8,11 @@ import { taskBelongsToProject, taskExist } from '../middleware/task'
 import { authenticate } from '../middleware/auth'
 
 const router = Router()
+router.use(authenticate)
 
 /** Routes for projects */
 
 router.post('/',
-  authenticate,
   body('projectName').notEmpty().withMessage('El Nombre del Proyecto es Obligatorio'),
   body('clientName').notEmpty().withMessage('El Nombre del Cliente es Obligatorio'),
   body('description').notEmpty().withMessage('La Descripcion del Proyecto es Obligatoria'),
@@ -20,7 +20,7 @@ router.post('/',
   ProjectController.createProject
 )
 
-router.get('/', authenticate, ProjectController.getAllProjects)
+router.get('/', ProjectController.getAllProjects)
 
 router.get('/:id',
   param('id').isMongoId().withMessage('ID no valido'),
