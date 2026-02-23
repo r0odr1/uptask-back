@@ -68,6 +68,11 @@ export class ProjectController {
         return res.status(404).json({ error: error.message })
       }
 
+      if(project.manager.toString() !== req.user._id.toString()) {
+        const error = new Error('Solo el Administrador del proyecto puede realizar cambios')
+        return res.status(404).json({ error: error.message })
+      }
+
       project.clientName = req.body.clientName
       project.projectName = req.body.projectName
       project.description = req.body.description
@@ -88,6 +93,11 @@ export class ProjectController {
 
       if(!project) {
         const error = new Error('Proyecto no encontrado')
+        return res.status(404).json({ error: error.message })
+      }
+
+      if(project.manager.toString() !== req.user._id.toString()) {
+        const error = new Error('Solo el Administrador del proyecto puede eliminar')
         return res.status(404).json({ error: error.message })
       }
 
