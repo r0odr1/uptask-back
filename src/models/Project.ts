@@ -40,7 +40,7 @@ const ProjectSchema: Schema = new Schema({
   team: [
     {
       type: Types.ObjectId,
-      ref: 'Task'
+      ref: 'User'
     }
   ],
 }, { timestamps: true })
