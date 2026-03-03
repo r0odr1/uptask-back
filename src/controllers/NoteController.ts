@@ -10,12 +10,20 @@ export class NotedController {
     note.createdBy = req.user._id;
     note.task = req.task._id;
 
-    // push the ObjectId rather than the string id getter
     req.task.notes.push(note._id);
 
     try {
       await Promise.allSettled([req.task.save(), note.save()]);
       res.send("Nota Creada Correctamente");
+    } catch (error) {
+      res.status(500).json({ error: "Huno un error" });
+    }
+  };
+
+  static getTaskNote = async (req: Request, res: Response) => {
+    try {
+      const notes = await Note.find({task: req.task._id})
+      res.json(notes);
     } catch (error) {
       res.status(500).json({ error: "Huno un error" });
     }

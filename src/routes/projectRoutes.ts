@@ -124,4 +124,8 @@ router.post('/:projectId/tasks/:taskId/notes',
   NotedController.createNote
 )
 
+router.get('/:projectId/tasks/:taskId/notes',
+  NotedController.getTaskNote
+)
+
 export default router
