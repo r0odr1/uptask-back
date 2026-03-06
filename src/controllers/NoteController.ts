@@ -1,6 +1,10 @@
 import type { Request, Response } from "express";
 import Note, { INote } from "../models/Node";
+import { Types } from "mongoose";
 
+type NoteParams = {
+  noteId: Types.ObjectId
+}
 export class NotedController {
   static createNote = async (req: Request<{}, {}, INote>, res: Response) => {
     const { content } = req.body;
@@ -24,6 +28,31 @@ export class NotedController {
     try {
       const notes = await Note.find({task: req.task._id})
       res.json(notes);
+    } catch (error) {
+      res.status(500).json({ error: "Huno un error" });
+    }
+  };
+
+  static deleteNote = async (req: Request<NoteParams>, res: Response) => {
+    const { noteId } = req.params
+    const note = await Note.findById(noteId)
+
+    if(!note) {
+      const error = new Error('Nota no encontrada')
+      return res.status(404).json({ error: error.message })
+    }
+
+    if(note.createdBy.toString() !== req.user._id.toString()) {
+      const error = new Error('Accion no valida')
+      return res.status(401).json({ error: error.message })
+    }
+
+    req.task.notes = req.task.notes.filter( note => note.toString() !== noteId.toString())
+
+    try {
+
+      await Promise.allSettled([ req.task.save(), note.deleteOne() ])
+      res.send('Nota Eliminada Correctamente');
     } catch (error) {
       res.status(500).json({ error: "Huno un error" });
     }
