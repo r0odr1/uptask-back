@@ -250,7 +250,7 @@ export class AuthController {
 
   }
 
-    static updateCurrentUserPassword = async (req: Request, res: Response) => {
+  static updateCurrentUserPassword = async (req: Request, res: Response) => {
 
     const { current_password, password } = req.body
     const user = await User.findById(req.user._id)
@@ -269,5 +269,19 @@ export class AuthController {
     } catch (error) {
       res.status(500).send('Hubo un Error')
     }
+  }
+
+  static checkPassword = async (req: Request, res: Response) => {
+
+    const { password } = req.body
+    const user = await User.findById(req.user._id)
+    const isPasswordCorrect = await checkPassword(password, user.password)
+
+    if(!isPasswordCorrect) {
+      const error = new Error('La Contraseña actual es incorrecta')
+      return res.status(401).json({error: error.message})
+    }
+
+    res.send('Contraseña Correcta')
   }
 }
