@@ -107,7 +107,7 @@ export class AuthController {
 
       res.send(token)
     } catch (error) {
-      res.status(500).json.apply({error: 'Hubo un error'})
+      res.status(500).json({error: 'Hubo un error'})
     }
   }
 
