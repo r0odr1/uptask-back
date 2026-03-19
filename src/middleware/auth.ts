@@ -33,12 +33,14 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
         next()
 
       } else {
-        res.status(500).json({error: 'Token No Válido'})
+        const error = new Error('Usuario no encontrado')
+        return res.status(401).json({error: error.message})
       }
     }
 
 
   } catch (error) {
-    res.status(500).json({error: 'Token No Válido'})
+    const message = (error as Error).message || 'Token no válido'
+    res.status(401).json({error: message})
   }
 }

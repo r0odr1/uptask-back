@@ -39,7 +39,7 @@ export class AuthController {
       })
 
       await Promise.allSettled([user.save(), token.save()])
-      res.send('Cuenta creada, revisa tu correo para confirmarla')
+      res.json({message: 'Cuenta creada, revisa tu correo para confirmarla'})
     } catch (error) {
       res.status(500).json({error: 'Hubo un error'})
     }
@@ -61,7 +61,7 @@ export class AuthController {
       user.confirmed = true
 
       await Promise.allSettled([ user.save(), tokenExists.deleteOne() ])
-      res.send('Cuenta confirmada correctamente')
+      res.json({message: 'Cuenta confirmada correctamente'})
     } catch (error) {
       res.status(500).json({error: 'Hubo un error'})
     }
@@ -105,7 +105,7 @@ export class AuthController {
 
       const token = generateJWT({id: user._id.toString()})
 
-      res.send(token)
+      res.json({ token })
     } catch (error) {
       res.status(500).json({error: 'Hubo un error'})
     }
@@ -142,7 +142,7 @@ export class AuthController {
       })
 
       await Promise.allSettled([user.save(), token.save()])
-      res.send('Se envió un nuevo token a tu correo')
+      res.json({message: 'Se envió un nuevo token a tu correo'})
     } catch (error) {
       res.status(500).json({error: 'Hubo un error'})
     }
@@ -174,7 +174,7 @@ export class AuthController {
         token: token.token
       })
 
-      res.send('Se envió un nuevo token a tu correo')
+      res.json({message: 'Se envió un nuevo token a tu correo'})
     } catch (error) {
       res.status(500).json({error: 'Hubo un error'})
     }
@@ -192,7 +192,7 @@ export class AuthController {
         return res.status(404).json({error : error.message})
       }
 
-      res.send('Token válido, Define tu nueva contraseña')
+      res.json({message: 'Token válido, Define tu nueva contraseña'})
     } catch (error) {
       res.status(500).json({error: 'Hubo un error'})
     }
@@ -216,7 +216,7 @@ export class AuthController {
 
       await Promise.allSettled([user.save(), tokenExists.deleteOne()])
 
-      res.send('La Contraseña se modificó correctamente')
+      res.json({message: 'La Contraseña se modificó correctamente'})
     } catch (error) {
       res.status(500).json({error: 'Hubo un error'})
     }
@@ -243,9 +243,9 @@ export class AuthController {
     try {
 
       await req.user.save()
-      res.send('Perfil actualizado correctamente')
+      res.json({message: 'Perfil actualizado correctamente'})
     } catch (error) {
-      res.status(500).send('Hubo un Error')
+      res.status(500).json({error: 'Hubo un Error'})
     }
 
   }
@@ -265,9 +265,9 @@ export class AuthController {
 
       user.password = await hashPassword(password)
       await user.save()
-      res.send('El Password se modifico correctamente')
+      res.json({message: 'El Password se modifico correctamente'})
     } catch (error) {
-      res.status(500).send('Hubo un Error')
+      res.status(500).json({error: 'Hubo un Error'})
     }
   }
 
@@ -282,6 +282,6 @@ export class AuthController {
       return res.status(401).json({error: error.message})
     }
 
-    res.send('Contraseña Correcta')
+    res.json({message: 'Contraseña Correcta'})
   }
 }
