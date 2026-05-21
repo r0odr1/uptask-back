@@ -31,14 +31,15 @@ export class AuthController {
       token.token = generateToken()
       token.user = user._id
 
+      await Promise.allSettled([user.save(), token.save()])
+      
       // Enviar el email
-      AuthEmail.sendConfirmationEmail({
+      await AuthEmail.sendConfirmationEmail({
         email: user.email,
         name: user.name,
         token: token.token
       })
 
-      await Promise.allSettled([user.save(), token.save()])
       res.json({message: 'Cuenta creada, revisa tu correo para confirmarla'})
     } catch (error) {
       res.status(500).json({error: 'Hubo un error'})
@@ -86,7 +87,7 @@ export class AuthController {
         await token.save()
 
         // Enviar el email
-        AuthEmail.sendConfirmationEmail({
+        await AuthEmail.sendConfirmationEmail({
           email: user.email,
           name: user.name,
           token: token.token
@@ -135,7 +136,7 @@ export class AuthController {
       token.user = user._id
 
       // Enviar el email
-      AuthEmail.sendConfirmationEmail({
+      await AuthEmail.sendConfirmationEmail({
         email: user.email,
         name: user.name,
         token: token.token
@@ -168,7 +169,7 @@ export class AuthController {
       await token.save()
 
       // Enviar el email
-      AuthEmail.sendPasswordResetToken({
+      await AuthEmail.sendPasswordResetToken({
         email: user.email,
         name: user.name,
         token: token.token
